@@ -174,7 +174,7 @@ void MainWindow::dropEvent(QDropEvent *event)
 void MainWindow::on_pushButton_open_clicked()
 {
     /*选择文件*/
-    QString filePath = QDir::currentPath() + "/../test";
+    QString filePath = QDir::currentPath();
     QString filename = QFileDialog::getOpenFileName(this,"选择打开的文件",filePath,tr("*.*"));
 
     playMedia(filename);
