@@ -1,0 +1,12 @@
+﻿{
+    "plugins": [
+        {
+            "name": "plugina",
+            "isUsed": true
+        },
+        {
+            "name": "pluginb",
+            "isUsed": true
+        }
+    ]
+}

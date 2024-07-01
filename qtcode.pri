@@ -7,3 +7,5 @@ CONFIG(debug,debug|release){
 
 BIN_DIST_DIR = $$DIST_DIR
 DEPENCE_DIR = $$PROJECT_DIR/dependence
+
+PLUGIN_PATH = $$BIN_DIST_DIR/plugins

@@ -1,2 +1,2 @@
 TEMPLATE = subdirs
-SUBDIRS += app
+SUBDIRS += interface lib plugins app
