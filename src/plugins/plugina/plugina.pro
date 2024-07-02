@@ -20,7 +20,7 @@ OTHER_FILES += plugin_info.json
 
 INCLUDEPATH += $$BIN_DIST_DIR/include
 
-DESTDIR = $$BIN_DIST_DIR/plugins
+#DESTDIR = $$BIN_DIST_DIR/plugins
 
 target.path = $$PLUGIN_PATH
 INSTALLS += target

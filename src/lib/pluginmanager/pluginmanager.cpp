@@ -1,4 +1,4 @@
-#include <QString>
+﻿#include <QString>
 #include <QDir>
 #include <QDebug>
 #include <QFileInfo>
@@ -92,12 +92,16 @@ bool PluginManager::loadPlugin(QString &filePath)
 
     //加载插件
     QPluginLoader *loader = new QPluginLoader(filePath);
+    QFileInfo fileInfo(filePath);
+    QString fileName = fileInfo.fileName();
     if(loader->load())
     {
+        qDebug()<<QStringLiteral("加载插件：%1成功").arg(fileName);
         // 如果继承自 Plugin，则认为是自己的插件（防止外部插件注入）。
         PluginInterface *plugin = qobject_cast<PluginInterface *>(loader->instance());
         if(plugin)
         {
+            plugin->init();
             m_pluginData->m_loaders.insert(filePath, loader);
         }
         else
@@ -107,6 +111,7 @@ bool PluginManager::loadPlugin(QString &filePath)
         }
         return true;
     }
+    qDebug()<<QStringLiteral("加载插件：%1失败").arg(fileName);
     return false;
 }
 
@@ -115,14 +120,21 @@ bool PluginManager::unloadPlugin(QString &filePath)
     if(!m_pluginData)
         return false;
     QPluginLoader *loader = m_pluginData->m_loaders.value(filePath);
+    QFileInfo fileInfo(filePath);
+    QString fileName = fileInfo.fileName();
+
     //卸载插件，并从内部数据结构中移除
     if(loader && loader->unload())
     {
+        PluginInterface *plugin = qobject_cast<PluginInterface *>(loader->instance());
+        if(plugin) plugin->clean();
         m_pluginData->m_loaders.remove(filePath);
         delete loader;
         loader = nullptr;
+        qDebug()<<QStringLiteral("卸载插件：%1成功").arg(fileName);
         return  true;
     }
+    qDebug()<<QStringLiteral("卸载插件：%1失败").arg(fileName);
     return false;
 }
 
@@ -225,7 +237,7 @@ void PluginManager::setPluginList()
     {
         QJsonObject pluginObj = value.toObject();
         QString pluginName = pluginObj["name"].toString();
-        bool isUsed = pluginObj["isUsed"].toBool();
+        QString isUsed = pluginObj["isUsed"].toString();
         PluginCongInfo info;
         info.pluginName = pluginName;
         info.isUsed = isUsed;

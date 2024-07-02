@@ -10,8 +10,8 @@
 class PLUGINA_EXPORT PluginA : public QObject, public PluginInterface
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID InterfacePlugin_iid FILE "plugin_info.json") // QT5.0 引入
-    Q_INTERFACES(InterfacePlugin)
+    Q_PLUGIN_METADATA(IID "plugina" FILE "plugin_info.json") // QT5.0 引入
+    Q_INTERFACES(PluginInterface)
 public:
     explicit PluginA(QObject *parent = 0);
     virtual QString getname() override;

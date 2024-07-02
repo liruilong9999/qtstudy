@@ -1,4 +1,6 @@
 TEMPLATE = subdirs
 SUBDIRS += \
-    pluginmanager/pluginmanager.pro 
+    llog \
+    pluginmanager/pluginmanager.pro \
+    pugixml/pugixml.pro
 

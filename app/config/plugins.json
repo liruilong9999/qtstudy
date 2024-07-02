@@ -2,11 +2,11 @@
     "plugins": [
         {
             "name": "plugina",
-            "isUsed": true
+            "isUsed": "1"
         },
         {
             "name": "pluginb",
-            "isUsed": true
+            "isUsed": "1"
         }
     ]
 }

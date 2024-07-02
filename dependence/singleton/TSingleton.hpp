@@ -6,9 +6,9 @@
  * @tparam T 实例化单例类
  */
 template <class T>
-class TSingleton {
+class TSingleton
+{
 public:
-    // C++11 Meyer's Singleton，线程安全
     static T* instance()
     {
         static T instance;
