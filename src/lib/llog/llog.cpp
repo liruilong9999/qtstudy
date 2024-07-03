@@ -93,7 +93,7 @@ LLog::LLog()
     //文件名（当前时间）
     QDateTime curTime = QDateTime::currentDateTime();
     QString fileName = curTime.toString("yyyy_MM_dd_hh_mm_ss");
-    std::string logFileName = fileName.toStdString()+".log";
+    std::string logFileName = "./log/"+fileName.toStdString()+".log";
     //    // 创建控制台 sink
     //    auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
     //    console_sink->set_level(spdlog::level::info);
