@@ -13,6 +13,17 @@ HEADERS += \
     pluginmanager.h\
     pluginmanager_gloabal.h
 
+INCLUDEPATH += ../
+INCLUDEPATH += $$DEPENCE_DIR
+
+CONFIG(release, debug|release){
+    LIBS += -L$$BIN_DIST_DIR/lib/ -lllog
+    }else
+    {
+        LIBS += -L$$BIN_DIST_DIR/lib/ -lllogd
+    }
+
+
 CONFIG(debug,debug|release) : TARGET = pluginmanagerd
 CONFIG(release,debug|release) : TARGET = pluginmanager
 

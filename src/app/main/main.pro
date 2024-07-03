@@ -8,7 +8,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 include($$PWD/../../../qtcode.pri)
 INCLUDEPATH += $$BIN_DIST_DIR/include
-INCLUDEPATH += $$SRC_DIR/common
 INCLUDEPATH += $$DEPENCE_DIR
 
 CONFIG(release, debug|release){

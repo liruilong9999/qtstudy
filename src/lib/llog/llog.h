@@ -8,7 +8,7 @@
 
 struct LLogPrivate;
 
-class LLOG_EXPORT LLog : TSingleton<LLog>
+class LLOG_EXPORT LLog : public TSingleton<LLog>
 {
     friend class TSingleton<LLog>;
 public:
@@ -22,25 +22,28 @@ public:
      * \brief printWaring 打印警告信息
      * \param msg
      */
-    void printWaring(std::string msg);
-
+    void printWaringStd(std::string msg);
+    void printWaring(QString msg);
     /*!
      * \brief printDebug 打印调试信息
      * \param msg
      */
-    void printDebug(std::string msg);
+    void printDebugStd(std::string msg);
+    void printDebug(QString msg);
 
     /*!
      * \brief printError 打印错误信息
      * \param msg
      */
-    void printError(std::string msg);
+    void printErrorStd(std::string msg);
+    void printError(QString msg);
 
     /*!
      * \brief printInfo 打印普通信息
      * \param msg
      */
-    void printInfo(std::string msg);
+    void printInfoStd(std::string msg);
+    void printInfo(QString msg);
 
 private:
     LLog();
@@ -50,8 +53,9 @@ private:
     LLogPrivate * m_logData = nullptr;
 };
 
-//LLog::instance();
-
-#define LOG_WARN(msg)
+#define LOG_WARN(msg)  LLog::instance().printWaring(msg)
+#define LOG_DEBUG(msg) LLog::instance().printDebug(msg)
+#define LOG_INFO(msg)  LLog::instance().printInfo(msg)
+#define LOG_ERROR(msg) LLog::instance().printError(msg)
 
 #endif // LLOG_H

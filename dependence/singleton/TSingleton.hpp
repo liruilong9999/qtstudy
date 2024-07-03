@@ -9,10 +9,10 @@ template <class T>
 class TSingleton
 {
 public:
-    static T* instance()
+    static T & instance()
     {
         static T instance;
-        return& instance;
+        return instance;
     }
 
 protected:
