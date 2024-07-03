@@ -35,7 +35,7 @@ void LLog::printWaringStd(std::string msg)
 
 void LLog::printWaring(QString msg)
 {
-    qDebug()<<msg;
+    qDebug()<<"[Waring] "<<msg;
     if(m_logData&&m_logData->isSave)
         printWaringStd(msg.toStdString());
 }
@@ -51,7 +51,7 @@ void LLog::printDebugStd(std::string msg)
 
 void LLog::printDebug(QString msg)
 {
-    qDebug()<<msg;
+    qDebug()<<"[Debug] "<<msg;
     if(m_logData&&m_logData->isSave)
         printDebugStd(msg.toStdString());
 }
@@ -67,7 +67,7 @@ void LLog::printErrorStd(std::string msg)
 
 void LLog::printError(QString msg)
 {
-    qDebug()<<msg;
+    qDebug()<<"[Error] "<<msg;
     if(m_logData&&m_logData->isSave)
         printErrorStd(msg.toStdString());
 }
@@ -83,7 +83,7 @@ void LLog::printInfoStd(std::string msg)
 
 void LLog::printInfo(QString msg)
 {
-    qDebug()<<msg;
+    qDebug()<<"[Info] "<<msg;
     if(m_logData&&m_logData->isSave)
         printInfoStd(msg.toStdString());
 }
