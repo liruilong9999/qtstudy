@@ -1,27 +1,35 @@
-QT       += core gui
-
-include($$PWD/../../../qtcode.pri)
-
+QT       += core gui widgets
 TEMPLATE = lib
-DEFINES +=PLUGINA_LIBRARY
+include($$PWD/../../../qtcode.pri)
 
 CONFIG += c++11
 CONFIG += plugin
 
+DEFINES += QT_DEPRECATED_WARNINGS
+
+INCLUDEPATH += $$DEPENCE_DIR
+CONFIG(release, debug|release){
+    LIBS += -L$$BIN_DIST_DIR/lib/ -lappskeleton
+    LIBS += -L$$BIN_DIST_DIR/lib/ -lleventbus
+    LIBS += -L$$BIN_DIST_DIR/lib/ -lllog
+}
+else
+{
+    LIBS += -L$$BIN_DIST_DIR/lib/ -lappskeletond
+    LIBS += -L$$BIN_DIST_DIR/lib/ -lleventbusd
+    LIBS += -L$$BIN_DIST_DIR/lib/ -lllogd
+}
+
 SOURCES += \
-    plugina.cpp 
+    plugina.cpp \
+    testclass.cpp
 
 HEADERS += \
     plugina.h \
-    plugina_global.h
+    testclass.h
 
-DEFINES += QT_DEPRECATED_WARNINGS
 OTHER_FILES += plugin_info.json
-
-INCLUDEPATH += $$BIN_DIST_DIR/include
-
-#DESTDIR = $$BIN_DIST_DIR/plugins
-
-target.path = $$PLUGIN_PATH
+target.path = $$BIN_DIST_DIR/plugins
 INSTALLS += target
+
 

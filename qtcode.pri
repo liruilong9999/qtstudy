@@ -13,4 +13,5 @@ INS_LIB_DIR = $$BIN_DIST_DIR/lib #lib库安装路径
 SRC_DIR = $$PROJECT_DIR/src # 代码路径
 DEPENCE_DIR = $$PROJECT_DIR/dependence #三方库路径
 
-
+INCLUDEPATH += $$DEPENCE_DIR
+INCLUDEPATH += $$SRC_DIR

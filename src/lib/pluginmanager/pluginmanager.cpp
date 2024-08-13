@@ -8,17 +8,17 @@
 #include <QCoreApplication>
 #include <QFileInfoList>
 
-#include <llog/llog.h>
+#include <lib/llog/llog.h>
 
 #include "pluginmanager.h"
 #include "plugininterface.h"
 
-#define PLUGIN_CONF_PATH QString(qApp->applicationDirPath() + "/config/plugins.json");
+#define PLUGIN_CONF_PATH QString(qApp->applicationDirPath() + "/config/plugins.json")
 
 struct PluginCongInfo
 {
     QString pluginName{""};
-    QString isUsed {"1"};
+    QString isUsed{"1"};
 };
 
 /*!
@@ -27,50 +27,48 @@ struct PluginCongInfo
 class PluginManagerPrivate
 {
 public:
-    //插件依赖检测
-    bool check(const QString &filepath);
+    // 插件依赖检测
+    bool check(const QString & filepath);
 
-    QHash<QString, QVariant> m_names; //插件路径--插件名称
-    QHash<QString, QVariant> m_versions; //插件路径--插件版本
-    QHash<QString, QVariantList>m_dependencies; //插件路径--插件额外依赖的其他插件
-    QHash<QString, QPluginLoader *>m_loaders; //插件路径--QPluginLoader实例
-    QHash<QString, PluginCongInfo> pluginCongInfo;
+    QHash<QString, QVariant>        m_names;        // 插件路径--插件名称
+    QHash<QString, QVariant>        m_versions;     // 插件路径--插件版本
+    QHash<QString, QVariantList>    m_dependencies; // 插件路径--插件额外依赖的其他插件
+    QHash<QString, QPluginLoader *> m_loaders;      // 插件路径--QPluginLoader实例
+    QHash<QString, PluginCongInfo>  pluginCongInfo;
+    QStringList                     m_loadOrder; // 插件加载顺序
 };
 
-bool PluginManagerPrivate::check(const QString &filepath)
+bool PluginManagerPrivate::check(const QString & filepath)
 {
-    for(QVariant item : m_dependencies.value(filepath))
+    for (QVariant item : m_dependencies.value(filepath))
     {
         QVariantMap map = item.toMap();
-        //依赖的插件名称、版本、路径
-        QVariant name = map.value("name");
+        // 依赖的插件名称、版本、路径
+        QVariant name    = map.value("name");
         QVariant version = map.value("version");
-        QString path = m_names.key(name);
+        QString  path    = m_names.key(name);
 
         /********** 检测插件是否依赖于其他插件 **********/
         // 先检测插件名称
-        if(!m_names.values().contains(name))
+        if (!m_names.values().contains(name))
         {
-            QString strcons = "Missing dependency: "+ name.toString()+" for plugin "+path;
+            QString strcons = "Missing dependency: " + name.toString() + " for plugin " + path;
             LOG_INFO(strcons);
-            //QMessageBox::warning(nullptr, ("Plugins Loader Error"), strcons, QMessageBox::Ok);
             return false;
         }
-        //再检测插件版本
-        if(m_versions.value(path) != version)
+        // 再检测插件版本
+        if (m_versions.value(path) != version)
         {
-            QString strcons = "Version mismatch: " + name.toString() +" version "+m_versions.value(m_names.key(name)).toString()+
-                    " but " + version.toString() + " required for plugin "+path;
+            QString strcons = "Version mismatch: " + name.toString() + " version " + m_versions.value(m_names.key(name)).toString() +
+                              " but " + version.toString() + " required for plugin " + path;
             LOG_INFO(strcons);
-            //QMessageBox::warning(nullptr, "Plugins Loader Error", strcons, QMessageBox::Ok);
             return false;
         }
-        //最后检测被依赖的插件是否还依赖其他的插件
-        if(!check(path))
+        // 最后检测被依赖的插件是否还依赖其他的插件
+        if (!check(path))
         {
-            QString strcons = "Corrupted dependency: "+name.toString()+" for plugin "+path;
+            QString strcons = "Corrupted dependency: " + name.toString() + " for plugin " + path;
             LOG_INFO(strcons);
-            //QMessageBox::warning(nullptr, "Plugins Loader Error", strcons, QMessageBox::Ok);
             return false;
         }
     }
@@ -78,33 +76,31 @@ bool PluginManagerPrivate::check(const QString &filepath)
     return true;
 }
 
-PluginManager &PluginManager::GetInstance()
+PluginManager & PluginManager::GetInstance()
 {
     static PluginManager instance;
     return instance;
 }
 
-bool PluginManager::loadPlugin(QString &filePath)
+bool PluginManager::loadPlugin(QString & filePath)
 {
-    if(!QLibrary::isLibrary(filePath))
+    if (!QLibrary::isLibrary(filePath))
         return false;
 
-    //检测依赖
-    if(!m_pluginData && !m_pluginData->check(filePath))
+    // 检测依赖
+    if (!m_pluginData && !m_pluginData->check(filePath))
         return false;
 
-    //加载插件
-    QPluginLoader *loader = new QPluginLoader(filePath);
-    QFileInfo fileInfo(filePath);
-    QString fileName = fileInfo.fileName();
-    if(loader->load())
+    // 加载插件
+    QPluginLoader * loader = new QPluginLoader(filePath);
+    QFileInfo       fileInfo(filePath);
+    QString         fileName = fileInfo.fileName();
+    if (loader->load())
     {
         LOG_INFO(QStringLiteral("加载插件：%1成功").arg(fileName));
-        // 如果继承自 Plugin，则认为是自己的插件（防止外部插件注入）。
-        PluginInterface *plugin = qobject_cast<PluginInterface *>(loader->instance());
-        if(plugin)
+        PluginInterface * plugin = qobject_cast<PluginInterface *>(loader->instance());
+        if (plugin)
         {
-            plugin->init();
             m_pluginData->m_loaders.insert(filePath, loader);
         }
         else
@@ -118,24 +114,21 @@ bool PluginManager::loadPlugin(QString &filePath)
     return false;
 }
 
-bool PluginManager::unloadPlugin(QString &filePath)
+bool PluginManager::unloadPlugin(QString & filePath)
 {
-    if(!m_pluginData)
+    if (!m_pluginData)
         return false;
-    QPluginLoader *loader = m_pluginData->m_loaders.value(filePath);
-    QFileInfo fileInfo(filePath);
-    QString fileName = fileInfo.fileName();
+    QPluginLoader * loader = m_pluginData->m_loaders.value(filePath);
+    QFileInfo       fileInfo(filePath);
+    QString         fileName = fileInfo.fileName();
 
-    //卸载插件，并从内部数据结构中移除
-    if(loader && loader->unload())
+    if (loader && loader->unload())
     {
-        PluginInterface *plugin = qobject_cast<PluginInterface *>(loader->instance());
-        if(plugin) plugin->clean();
         m_pluginData->m_loaders.remove(filePath);
         delete loader;
         loader = nullptr;
         LOG_INFO(QStringLiteral("卸载插件：%1成功").arg(fileName));
-        return  true;
+        return true;
     }
     LOG_INFO(QStringLiteral("卸载插件：%1失败").arg(fileName));
     return false;
@@ -143,15 +136,17 @@ bool PluginManager::unloadPlugin(QString &filePath)
 
 bool PluginManager::loadAllPlugin()
 {
-    //获取插件配置文件
     setPluginList();
+
+    // 清空之前加载的插件信息
+    m_pluginData->m_loaders.clear();
 
     QDir pluginsdir = QDir(qApp->applicationDirPath());
     pluginsdir.cd("plugins");
     QFileInfoList pluginsInfo = pluginsdir.entryInfoList(QDir::Files | QDir::NoDotAndDotDot);
     QFileInfoList useableList;
 
-    for (const QFileInfo fileInfo : pluginsInfo)
+    for (const QFileInfo & fileInfo : pluginsInfo)
     {
         if (QLibrary::isLibrary(fileInfo.absoluteFilePath()))
         {
@@ -167,26 +162,95 @@ bool PluginManager::loadAllPlugin()
         }
     }
 
-    //初始化插件中的元数据
-    for(QFileInfo fileinfo : useableList)
-        scanMetaData(fileinfo.absoluteFilePath());
-
-    //加载插件
-    for(QFileInfo fileinfo : useableList)
+    // 按配置文件中的顺序加载插件
+    for (const QString & pluginName : m_pluginData->m_loadOrder)
     {
-        QString path = fileinfo.absoluteFilePath();
-        loadPlugin(path);
+        for (const QFileInfo & fileInfo : useableList)
+        {
+            if (fileInfo.baseName() == pluginName)
+            {
+                QString path = fileInfo.absoluteFilePath();
+                if (loadPlugin(path))
+                {
+                    scanMetaData(path);
+                }
+            }
+        }
     }
+
+    // 初始化插件
+    foreach (const QString & pluginName, m_pluginData->m_loadOrder)
+    {
+        for (const QFileInfo & fileInfo : useableList)
+        {
+            if (fileInfo.baseName() == pluginName)
+            {
+                QString         path   = fileInfo.absoluteFilePath();
+                QPluginLoader * loader = m_pluginData->m_loaders.value(path);
+                if (loader)
+                {
+                    PluginInterface * plugin = qobject_cast<PluginInterface *>(loader->instance());
+                    if (plugin)
+                    {
+                        if (plugin->init())
+                            LOG_INFO(QStringLiteral("初始化插件: %1 成功").arg(pluginName));
+                        else
+                        {
+                            LOG_WARN(QStringLiteral("初始化插件: %1 失败").arg(pluginName));
+                        }
+                    }
+                }
+                break;
+            }
+        }
+    }
+
     return true;
 }
 
 bool PluginManager::unloadAllPlugin()
 {
-    if(!m_pluginData)
+    if (!m_pluginData)
         return false;
-    foreach (auto filepath, m_pluginData->m_loaders.keys())
+
+    // 清理插件
+    for (int i = m_pluginData->m_loadOrder.size() - 1; i >= 0; i--)
     {
-        unloadPlugin(filepath);
+        for (const QFileInfo & fileInfo : m_pluginData->m_loaders.keys())
+        {
+            if (fileInfo.baseName() == m_pluginData->m_loadOrder[i])
+            {
+                QString         path   = fileInfo.absoluteFilePath();
+                QPluginLoader * loader = m_pluginData->m_loaders.value(path);
+                if (loader)
+                {
+                    PluginInterface * plugin = qobject_cast<PluginInterface *>(loader->instance());
+                    if (plugin)
+                    {
+                        if (plugin->clean())
+                            LOG_INFO(QStringLiteral("清理插件: %1 成功").arg(fileInfo.baseName()));
+                        else
+                        {
+                            LOG_WARN(QStringLiteral("初始化插件: %1 失败").arg(fileInfo.baseName()));
+                        }
+                    }
+                }
+                break;
+            }
+        }
+    }
+    // 清理插件
+    for (int i = m_pluginData->m_loadOrder.size() - 1; i >= 0; i--)
+    {
+        for (const QFileInfo & fileInfo : m_pluginData->m_loaders.keys())
+        {
+            if (fileInfo.baseName() == m_pluginData->m_loadOrder[i])
+            {
+                QString path = fileInfo.absoluteFilePath();
+                unloadPlugin(path);
+                break;
+            }
+        }
     }
     return true;
 }
@@ -197,16 +261,14 @@ QList<QString> PluginManager::getPluginsName()
     return res;
 }
 
-void PluginManager::scanMetaData(const QString &filepath)
+void PluginManager::scanMetaData(const QString & filepath)
 {
-    if(!m_pluginData)
+    if (!m_pluginData)
         return;
-    //判断是否为库（后缀有效性）
-    if(!QLibrary::isLibrary(filepath))
-        return ;
-    //获取元数据
-    QPluginLoader *loader = new QPluginLoader(filepath);
-    QJsonObject json = loader->metaData().value("MetaData").toObject();
+    if (!QLibrary::isLibrary(filepath))
+        return;
+    QPluginLoader * loader = new QPluginLoader(filepath);
+    QJsonObject     json   = loader->metaData().value("MetaData").toObject();
 
     QVariant var = json.value("name").toVariant();
     m_pluginData->m_names.insert(filepath, json.value("name").toVariant());
@@ -231,23 +293,28 @@ void PluginManager::setPluginList()
     QByteArray data = file.readAll();
     file.close();
 
-    QJsonDocument doc = QJsonDocument::fromJson(data);
-    QJsonObject obj = doc.object();
-    QJsonArray pluginArray = obj["plugins"].toArray();
+    QJsonDocument doc         = QJsonDocument::fromJson(data);
+    QJsonObject   obj         = doc.object();
+    QJsonArray    pluginArray = obj["plugins"].toArray();
 
     m_pluginData->pluginCongInfo.clear();
-    foreach (const QJsonValue &value, pluginArray)
+    m_pluginData->m_loadOrder.clear();
+
+    foreach (const QJsonValue & value, pluginArray)
     {
-        QJsonObject pluginObj = value.toObject();
-        QString pluginName = pluginObj["name"].toString();
-        QString isUsed = pluginObj["isUsed"].toString();
+        QJsonObject    pluginObj  = value.toObject();
+        QString        pluginName = pluginObj["name"].toString();
+        QString        isUsed     = pluginObj["isUsed"].toString();
         PluginCongInfo info;
         info.pluginName = pluginName;
-        info.isUsed = isUsed;
+        info.isUsed     = isUsed;
 
-        m_pluginData->pluginCongInfo.insert(info.pluginName,info);
+        if (info.isUsed == "1")
+        {
+            m_pluginData->pluginCongInfo.insert(info.pluginName, info);
+            m_pluginData->m_loadOrder.append(info.pluginName);
+        }
     }
-
 }
 
 PluginManager::PluginManager()
@@ -257,10 +324,9 @@ PluginManager::PluginManager()
 
 PluginManager::~PluginManager()
 {
-    if(m_pluginData)
+    if (m_pluginData)
     {
         delete m_pluginData;
         m_pluginData = nullptr;
     }
 }
-

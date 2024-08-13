@@ -7,14 +7,12 @@
 class PluginInterface
 {
 public:
-    //虚析构，保障内存上先释放子类
+    // 虚析构，保障内存上先释放子类
     virtual ~PluginInterface(){};
 
     virtual QString getname() = 0;
-    virtual bool init() = 0;
-    virtual void clean() = 0;
-
-
+    virtual bool    init()    = 0;
+    virtual bool    clean()   = 0;
 };
 
 #define PluginInterface_iid "lrl.QtPluginsManager.PluginInterFace"

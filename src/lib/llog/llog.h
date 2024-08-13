@@ -3,14 +3,15 @@
 
 #include <singleton/TSingleton.hpp>
 #include <string>
+#include <QDateTime>
 #include "llog_global.h"
-
 
 struct LLogPrivate;
 
 class LLOG_EXPORT LLog : public TSingleton<LLog>
 {
     friend class TSingleton<LLog>;
+
 public:
     /*!
      * \brief saveLog 是否保存log到本地
@@ -53,9 +54,11 @@ private:
     LLogPrivate * m_logData = nullptr;
 };
 
-#define LOG_WARN(msg)  LLog::instance().printWaring(msg)
-#define LOG_DEBUG(msg) LLog::instance().printDebug(msg)
-#define LOG_INFO(msg)  LLog::instance().printInfo(msg)
-#define LOG_ERROR(msg) LLog::instance().printError(msg)
+#define CURRENT_TIME QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss")
+
+#define LOG_WARN(msg)  LLog::getInstance()->printWaring(CURRENT_TIME + " " + msg)
+#define LOG_DEBUG(msg) LLog::getInstance()->printDebug(CURRENT_TIME + " " + msg)
+#define LOG_INFO(msg)  LLog::getInstance()->printInfo(CURRENT_TIME + " " + msg)
+#define LOG_ERROR(msg) LLog::getInstance()->printError(CURRENT_TIME + " " + msg)
 
 #endif // LLOG_H

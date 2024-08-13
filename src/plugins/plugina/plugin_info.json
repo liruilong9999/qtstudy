@@ -3,6 +3,6 @@
     "date" : "2024/07/01",
     "name" : "plugina",
     "version" : "1.0.0",
-    "des" : "描述测试插件",
+    "des" : "测试插件",
     "dependencies" : []
 }

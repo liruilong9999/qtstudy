@@ -1,7 +1,4 @@
 TEMPLATE = subdirs
 SUBDIRS += \
-#    drawpainter/drawpainter.pro \
-#    vlcplayer/vlcplayer.pro \
-     main/main.pro
-
+     main
 # app.dependence += lib

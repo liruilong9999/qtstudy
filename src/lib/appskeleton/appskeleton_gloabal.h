@@ -1,0 +1,12 @@
+﻿#ifndef APPSKELETON_GLOBAL_H__20240806
+#define APPSKELETON_GLOBAL_H__20240806
+
+#include <QtCore/qglobal.h>
+
+#if defined(APPSKELETON_LIBRARY)
+#define APPSKELETON_EXPORT Q_DECL_EXPORT
+#else
+#define APPSKELETON_EXPORT Q_DECL_IMPORT
+#endif
+
+#endif
