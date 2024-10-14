@@ -6,7 +6,7 @@
 #include <QList>
 #include <QVariant>
 #include <functional>
-#include <singleton/TSingleton.hpp>
+#include <include_common/TSingleton.hpp>
 
 #include "leventbus_global.h"
 

@@ -7,6 +7,8 @@
 #include <lib/leventbus/leventbus.h>
 #include <lib/llog/llog.h>
 
+#include <include_common/CircularQueue.h>
+
 #include "plugina.h"
 #include "testclass.h"
 

@@ -1,7 +1,7 @@
 #ifndef LLOG_H
 #define LLOG_H
 
-#include <singleton/TSingleton.hpp>
+#include <include_common/TSingleton.hpp>
 #include <string>
 #include <QDateTime>
 #include "llog_global.h"
