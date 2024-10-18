@@ -9,7 +9,7 @@
 
 class TestClass;
 class PluginA : public QObject,
-                      public PluginInterface
+                public PluginInterface
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "PluginA" FILE "plugin_info.json") // QT5.0 引入
@@ -23,8 +23,8 @@ public slots:
     void addTestClass();
 
 private:
-    QAction * m_actionTestClass{nullptr}; // 按钮
-    TestClass * m_TestClass{nullptr}; //类
+    QAction *   m_actionTestClass{nullptr}; // 按钮
+    TestClass * m_TestClass{nullptr};       // 类
 };
 
 #endif
